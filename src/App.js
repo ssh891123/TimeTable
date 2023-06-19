@@ -1,4 +1,4 @@
-import TimeTable from "./Timetable/Timetable";
+import TimeTable from "./Timetable/TimeTable";
 
 function App() {
   return (
