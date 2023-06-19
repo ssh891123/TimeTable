@@ -1,14 +1,14 @@
-import react from 'react';
+import React from 'react';
 import TimeTableCell from './TimeTableCell';
 
-function TimeTableRow() {
+function TimeTableRow({...props}) {
     return (
         <>
-        <TimeTableCell/>
-        <TimeTableCell/>
-        <TimeTableCell/>
-        <TimeTableCell/>
-        <TimeTableCell/>
+        <TimeTableCell day="mon" {...props} />
+        <TimeTableCell day="tue" {...props} />
+        <TimeTableCell day="wed" {...props} />
+        <TimeTableCell day="thu" {...props} />
+        <TimeTableCell day="fri" {...props} />
         </>
     )
 }
