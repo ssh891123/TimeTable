@@ -1,20 +1,28 @@
 import { TableContainer, Typography, Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
 import React from 'react';
 import TimeTableRow from './TimeTableRow';
+import { withStyles } from '@mui/styles';
 
 
 const hourData = Array.from({length: 11}, (i, j) => j+9);
+const styles = () => ({
+    Table:{
+        "& th,td": {
+            border: "1px solid rgba(224, 224, 224, 1)"
+        }
+    }
+})
 //[9, 10, ... 19]
 
-function TimeTable() {
+function TimeTable({classes}) {
 
     return (
         <>
-        <TableContainer>
-            <Typography>
+        <TableContainer sx={{width:"80%", minWidth:"650px", marginLeft:"auto", marginRight:"auto", marginTop:"200px"}}>
+            <Typography variant="h2" fontWeight={10} component="div" align="center">
                 강의 시간표
             </Typography>
-            <Table>
+            <Table className={classes.Table}>
                 <TableHead>
                     <TableRow>
                         <TableCell align="center" width={100}>Time</TableCell>
@@ -39,4 +47,4 @@ function TimeTable() {
     )
 }
 
-export default TimeTable
+export default withStyles(styles)(TimeTable)

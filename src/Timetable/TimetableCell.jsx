@@ -11,7 +11,7 @@ function TimeTableCell({day, timeNum}) {
         timeTableData[day].find(
         (time) => time.start <= timeNum && timeNum <= time.end)
     , [day, timeNum, timeTableData]);
-    console.log(timeData);
+    // console.log(timeData);
     return (
         <>
         {
