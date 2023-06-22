@@ -1,8 +1,9 @@
-import { TableContainer, Typography, Table, TableHead, TableBody, TableRow, TableCell } from '@mui/material';
-import React from 'react';
+import { TableContainer, Typography, Table, TableHead, TableBody, TableRow, TableCell, Button } from '@mui/material';
+import React, { useState, useCallback } from 'react';
 import TimeTableRow from './TimeTableRow';
+import InputModel from '../inputModel/InputModel';
 import { withStyles } from '@mui/styles';
-
+import AddBoxIcon from '@mui/icons-material/AddBox';
 
 const hourData = Array.from({length: 11}, (i, j) => j+9);
 const styles = () => ({
@@ -15,13 +16,25 @@ const styles = () => ({
 //[9, 10, ... 19]
 
 function TimeTable({classes}) {
+    const [showModel, setShowModel] = useState(false);
 
+    const handleClose = useCallback(() => {
+        setShowModel(false);
+    }, []);
     return (
         <>
         <TableContainer sx={{width:"80%", minWidth:"650px", marginLeft:"auto", marginRight:"auto", marginTop:"200px"}}>
             <Typography variant="h2" fontWeight={10} component="div" align="center">
                 강의 시간표
             </Typography>
+            <Button
+                variant="contain"
+                sx={{float:"right"}}
+                endIcon={<AddBoxIcon/>}
+                onClick={() => {setShowModel(true)}}
+            >
+                강의 입력
+            </Button>
             <Table className={classes.Table}>
                 <TableHead>
                     <TableRow>
@@ -43,6 +56,7 @@ function TimeTable({classes}) {
                 </TableBody>
             </Table>
         </TableContainer>
+        <InputModel showModel={showModel} handleClose={handleClose}></InputModel>
         </>
     )
 }
