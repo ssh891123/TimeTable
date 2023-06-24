@@ -4,6 +4,8 @@ import TimeTableRow from './TimeTableRow';
 import InputModel from '../inputModel/InputModel';
 import { withStyles } from '@mui/styles';
 import AddBoxIcon from '@mui/icons-material/AddBox';
+import { useRecoilValue } from 'recoil';
+import { timeTableState } from '../store/store';
 
 const hourData = Array.from({length: 11}, (i, j) => j+9);
 const styles = () => ({
@@ -15,12 +17,28 @@ const styles = () => ({
 })
 //[9, 10, ... 19]
 
-function TimeTable({classes}) {
+function TimeTable({classes}) { 
+    const timeTableData = useRecoilValue(timeTableState); //값만 가져옴
     const [showModel, setShowModel] = useState(false);
+    const [editInfo, setEditInfo] = useState({});
 
     const handleClose = useCallback(() => {
         setShowModel(false);
+        setEditInfo({});
     }, []);
+
+    const Edit = useCallback((day, id) => {
+        const { start, end, name, color } = timeTableData[day].find(lectureInfo => lectureInfo.id === id);
+        setEditInfo({
+            dayData: day,
+            startTimeData: start,
+            endTimeData: end,
+            lectureNameData: name,
+            colorData: color,
+            idNum: id
+        })
+        setShowModel(true)
+    }, [timeTableData]);
     return (
         <>
         <TableContainer sx={{width:"80%", minWidth:"650px", marginLeft:"auto", marginRight:"auto", marginTop:"200px"}}>
@@ -50,13 +68,13 @@ function TimeTable({classes}) {
                     {hourData.map((time, index) => (
                         <TableRow key={index}>
                             <TableCell align="center">{`${time}:00 - ${time+1}:00`}</TableCell>
-                            <TimeTableRow timeNum={time}/>
+                            <TimeTableRow timeNum={time} Edit={Edit} />
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
         </TableContainer>
-        <InputModel showModel={showModel} handleClose={handleClose}></InputModel>
+        <InputModel showModel={showModel} handleClose={handleClose} {...editInfo}></InputModel>
         </>
     )
 }

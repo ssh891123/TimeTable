@@ -12,7 +12,9 @@ const timeOptions = new Array(12).fill(null).map((e, i) => ({value: i+9, label:i
 
 const checkOverLap = (A, B) => B.start < A.start ? B.end > A.start : B.start < A.end;
 
-function InputModel({showModel, handleClose}) {
+// dataData, startTimeData, endTimeData, lectureNameData, colorData, idNum
+function InputModel({showModel, handleClose, 
+    dayData='mon', startTimeData=9, endTimeData=10, lectureNameData='', colorData='#00ffaa', idNum }) {
     const { formState:{errors}, control, getValues, handleSubmit, reset} = useForm();
 
     const [timeTableData, setTimeTableData] = useRecoilState(timeTableState);
@@ -21,14 +23,14 @@ function InputModel({showModel, handleClose}) {
     useEffect(() => {
         if(showModel) {
             reset({
-                lectureName: '',
-                day: 'mon',
-                startTime:9,
-                endTime:10,
-                lectureColor: '#00ffaa',
+                lectureName: lectureNameData,
+                day: dayData,
+                startTime: startTimeData,
+                endTime: endTimeData,
+                lectureColor: colorData,
             })
         }
-    }, [showModel]);
+    }, [showModel, reset, dayData, startTimeData, endTimeData, lectureNameData, colorData, idNum]);
 
     const Submit = useCallback(({lectureName, day, startTime, endTime, lectureColor}) =>{
         // 중복 검사
@@ -61,9 +63,48 @@ function InputModel({showModel, handleClose}) {
         handleClose();
     }, [timeTableData, setTimeTableData, handleClose]);
 
+    const Edit = useCallback(({lectureName, day, startTime, endTime, lectureColor}) => {
+        // 중복 검사
+        let valid = true;
+        for(let index=0 ; index < timeTableData[day].length ; index++) {
+            if(checkOverLap(timeTableData[day][index], {start:startTime, end:endTime}) &&
+                timeTableData[day][index]["id"] !== idNum) {
+                valid = false;
+                break;
+            }
+        }
+
+        if(!valid) {
+            alert("해당 시간에 강의가 이미 존재합니다.");
+            return;
+        }
+
+        const filteredDayData = [...timeTableData[dayData].filter(data => data.id !== idNum)];
+
+        const newTimeTableData = {
+            ...timeTableData,
+            [dayData]: filteredDayData
+        };
+
+        const newDayData = [...newTimeTableData[day], {
+            start: startTime,
+            end: endTime,
+            id: idNum,
+            name: lectureName,
+            color: lectureColor
+        }];
+
+        setTimeTableData({
+            ...newTimeTableData,
+            [day]:newDayData
+        });
+        
+        handleClose();
+    }, [dayData, handleClose, idNum, setTimeTableData, timeTableData]);
+
     return (
         <Dialog open={showModel} onClose={handleClose}>
-            <form onSubmit={handleSubmit((data) => { Submit(data); console.log(data); })}> 
+            <form onSubmit={handleSubmit(idNum ? Edit : Submit)}> 
             <DialogTitle>강의정보 입력</DialogTitle>
             <DialogContent style={{width:"400px"}}>
                 <Controller //react-hook-form
